@@ -2,7 +2,6 @@ package net.ddns.armen181.cafe.cafe_manager.bootstrap;
 
 
 import net.ddns.armen181.cafe.cafe_manager.domain.*;
-import net.ddns.armen181.cafe.cafe_manager.enums.OrderStatus;
 import net.ddns.armen181.cafe.cafe_manager.enums.ProductInOrderStatus;
 import net.ddns.armen181.cafe.cafe_manager.enums.Role;
 import net.ddns.armen181.cafe.cafe_manager.service.*;
@@ -17,13 +16,13 @@ public class BootStrap implements CommandLineRunner {
 
 
     private final ProductInOrderService productInOrderService;
-    private final TableOrderService tableOrderService;
+    private final CaffeTableService tableOrderService;
     private final CafeTableService cafeTableService;
     private final ProductService productService;
     private final UserService userService;
     private final Environment env;
 
-    public BootStrap(ProductInOrderService productInOrderService, TableOrderService tableOrderService,
+    public BootStrap(ProductInOrderService productInOrderService, CaffeTableService tableOrderService,
                      CafeTableService cafeTableService,
                      ProductService productService,
                      UserService userService,
@@ -51,6 +50,7 @@ public class BootStrap implements CommandLineRunner {
         // ==============  Creat simple order ====================
 
         CafeTable cafeTable = cafeTableService.create("Number 1");
+        user.addCafeTable(cafeTable);
 
         TableOrder order = tableOrderService.create("First chair");
 
@@ -66,8 +66,11 @@ public class BootStrap implements CommandLineRunner {
 
         order.addProductInOrder(productInOrder_1);
         order.addProductInOrder(productInOrder_2);
+
+
         cafeTable.addTableOrder(order);
-        user.addCafeTable(cafeTable);
+
+
     }
 
 

@@ -4,13 +4,18 @@ package net.ddns.armen181.cafe.cafe_manager.controller;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.ddns.armen181.cafe.cafe_manager.Dto.UserDto;
+import net.ddns.armen181.cafe.cafe_manager.domain.CafeTable;
+import net.ddns.armen181.cafe.cafe_manager.domain.TableOrder;
 import net.ddns.armen181.cafe.cafe_manager.domain.User;
+import net.ddns.armen181.cafe.cafe_manager.service.CafeTableService;
+import net.ddns.armen181.cafe.cafe_manager.service.CaffeTableService;
 import net.ddns.armen181.cafe.cafe_manager.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,9 +28,11 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final CafeTableService cafeTableService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, CafeTableService cafeTableService) {
         this.userService = userService;
+        this.cafeTableService = cafeTableService;
     }
 
     @PostMapping("/userCreat")
@@ -43,6 +50,23 @@ public class UserController {
     @PreAuthorize("hasAnyRole('MANAGER')")
     public ResponseEntity<UserDto> userGetById(@NonNull @RequestHeader Long id) {
         return UserToUserDtoConverter(userService.get(id));
+    }
+
+    @GetMapping("/userAddCafeTable")
+    @PreAuthorize("hasAnyRole('MANAGER')")
+    @Transactional
+    public ResponseEntity<UserDto> userAddCafeTable(@NonNull @RequestHeader Long userId,@NonNull @RequestHeader Long tableId) {
+            Optional<User> user = userService.get(userId);
+        if (user.isPresent()) {
+             Optional<CafeTable> table = cafeTableService.get(tableId);
+            if (table.isPresent()) {
+                log.info("try to sign table {} to  user {} ", tableId, userId);
+                user.get().addCafeTable(table.get());
+
+            }
+
+        }
+        return UserToUserDtoConverter(userService.get(userId));
     }
 
     @GetMapping("/userRemoveById")
@@ -68,10 +92,10 @@ public class UserController {
          userDto.setLastName(user.get().getLastName());
          userDto.setRole(user.get().getRole());
          log.info("User  -> {}, get -> {} ", userName, userDto);
-         return new ResponseEntity<UserDto>(userDto, HttpStatus.OK);
+         return new ResponseEntity<>(userDto, HttpStatus.OK);
      }
      log.info("Optional<User> wasn't preset ,  user -> {}", userName);
-     return new ResponseEntity<UserDto>(new UserDto(), HttpStatus.BAD_REQUEST);
+     return new ResponseEntity<>(new UserDto(), HttpStatus.BAD_REQUEST);
     }
 
     private ResponseEntity<UserDto> UserDtoToUserConverter(UserDto userDto) {
@@ -87,7 +111,7 @@ public class UserController {
 
         }
         log.info("Error creating new user by -> {}, Object -> {} ", userName, userDto);
-        return new ResponseEntity<UserDto>(userDto, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(userDto, HttpStatus.BAD_REQUEST);
     }
 
 }

@@ -13,5 +13,5 @@ public interface CafeTableService {
     Optional<List<CafeTable>> getAll(String userName);
     Optional<CafeTable> get(Long id);
     void remove(Long id);
-    CafeTable signTableOrder(Long cafeTableId, Long tableOrder);
+    CafeTable signTableOrder(Long cafeTableId, Long tableOrderId);
 }

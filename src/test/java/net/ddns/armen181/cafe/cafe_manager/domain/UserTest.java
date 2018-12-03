@@ -32,7 +32,7 @@ public class UserTest {
             user.setFirsName("Armen");
             user.setEMail("Armen.181@gmail.com");
             user.setRole(Role.WAITER);
-            System.out.println(userRepository.save(user));
+            userRepository.save(user);
         }
     }
 
