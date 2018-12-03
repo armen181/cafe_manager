@@ -10,6 +10,7 @@ import net.ddns.armen181.cafe.cafe_manager.service.TableOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -37,6 +38,11 @@ public class TableOrderServiceImpl implements TableOrderService {
     }
 
     @Override
+    public Optional<List<TableOrder>> get(String userName) {
+        return tableOrderRepository.findAllByUserName(userName);
+    }
+
+    @Override
     public Set<TableOrder> getAll() {
         return Sets.newHashSet(tableOrderRepository.findAll());
     }
@@ -49,6 +55,7 @@ public class TableOrderServiceImpl implements TableOrderService {
     }
 
     @Override
+    @Transactional
     public TableOrder signProductInOrder(Long tableOrderId, Long productInOrderId) {
         Optional<TableOrder> tableOrder = tableOrderRepository.findById(tableOrderId);
         if (tableOrder.isPresent()) {

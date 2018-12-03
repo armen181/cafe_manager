@@ -8,6 +8,7 @@ import net.ddns.armen181.cafe.cafe_manager.repository.ProductInOrderRepository;
 import net.ddns.armen181.cafe.cafe_manager.service.ProductInOrderService;
 import net.ddns.armen181.cafe.cafe_manager.service.ProductService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Set;
@@ -48,6 +49,7 @@ public class ProductInOrderServiceImpl implements ProductInOrderService {
     }
 
     @Override
+    @Transactional
     public ProductInOrder signProduct(Long productInOrderId, String productName, int amount) {
         Optional<ProductInOrder> productInOrder = productInOrderRepository.deleteAllById(productInOrderId);
         if (productInOrder.isPresent()) {

@@ -29,6 +29,9 @@ public class TableOrder implements Serializable {
     @Column(name = "cafeTableName")
     private String cafeTableName;
 
+    @Column(name = "userName")
+    private String userName;
+
     @Column(name = "orderStatus", nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;

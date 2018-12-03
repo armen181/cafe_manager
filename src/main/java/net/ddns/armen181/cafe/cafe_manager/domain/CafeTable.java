@@ -24,6 +24,9 @@ public class CafeTable implements Serializable {
     @Column(name = "userName")
     private String userName;
 
+    @Column(name = "isAttachOrder")
+    private Boolean isAttachOrder;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Getter(AccessLevel.NONE)
@@ -38,6 +41,8 @@ public class CafeTable implements Serializable {
     public CafeTable addTableOrder(TableOrder order) {
         order.setCafeTable(this);
         order.setCafeTableName(this.name);
+        order.setUserName(this.userName);
+        this.setIsAttachOrder(true);
         this.tableOrders.add(order);
         return this;
     }

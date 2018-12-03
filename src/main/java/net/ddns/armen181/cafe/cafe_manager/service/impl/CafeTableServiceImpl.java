@@ -9,6 +9,7 @@ import net.ddns.armen181.cafe.cafe_manager.service.TableOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,12 +29,18 @@ public class CafeTableServiceImpl implements CafeTableService {
     public CafeTable create (String name) {
         CafeTable cafeTable = new CafeTable();
         cafeTable.setName(name);
+        cafeTable.setIsAttachOrder(false);
         return cafeTableRepository.save(cafeTable);
     }
 
     @Override
     public Set<CafeTable> getAll() {
         return Sets.newHashSet(cafeTableRepository.findAll());
+    }
+
+    @Override
+    public Optional<List<CafeTable>> getAll(String userName) {
+        return cafeTableRepository.findAllByUserName(userName);
     }
 
     @Override

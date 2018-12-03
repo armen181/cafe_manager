@@ -5,9 +5,12 @@ import net.ddns.armen181.cafe.cafe_manager.domain.TableOrder;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface TableOrderRepository extends CrudRepository<TableOrder, Long> {
     Optional<TableOrder> findByName(String userName);
+    Optional<List<TableOrder>> findAllByUserName(String userName);
+    Optional<List<TableOrder>> findAllByCafeTableName(String userName);
 }
