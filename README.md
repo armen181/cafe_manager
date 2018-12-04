@@ -2,6 +2,13 @@
 For SFL
 ```
 ```
+[Demo site](https://armen181.ddns.net:8008)
+
+Login: admin
+
+Password: admin
+```
+```
 ### For Running this program first we shught install Lombok plugin and enable Annotation processing. Look at the picture
 ```
 ```
