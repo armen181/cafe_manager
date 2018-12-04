@@ -2,7 +2,7 @@
 For SFL
 ```
 ```
-[Demo site](https://armen181.ddns.net:8008)
+[Demo site](http://armen181.ddns.net:8008)
 
 Login: admin
 
