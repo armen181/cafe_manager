@@ -10,6 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface ProductInOrderRepository extends CrudRepository<ProductInOrder, Long> {
-        Optional<ProductInOrder> deleteAllById(Long id);
         Optional<List<ProductInOrder>> findAllByOrderName (String orderName);
 }

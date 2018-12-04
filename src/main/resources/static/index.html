@@ -28,9 +28,23 @@
         };
         $.ajax(settings).done(function (response) {
             if (response) {
+                var s = {
+                    "async": true,
+                    "crossDomain": true,
+                    "url": "isAdmin",
+                    "method": "GET",
+                    "headers": {}
+                };
+                $.ajax(s).done(function (b) {
+                    if (b) {
+                        window.location.href = 'admin.html';
+                    }else {
+                        $(".loginForm").hide();
+                        $(".navBarId").show();
+                    }
 
-                $(".loginForm").hide();
-                $(".navBarId").show();
+                });
+
             }
         });
     </script>

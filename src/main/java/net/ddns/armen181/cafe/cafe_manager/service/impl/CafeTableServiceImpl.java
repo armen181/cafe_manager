@@ -1,6 +1,6 @@
 package net.ddns.armen181.cafe.cafe_manager.service.impl;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import net.ddns.armen181.cafe.cafe_manager.domain.CafeTable;
 import net.ddns.armen181.cafe.cafe_manager.domain.TableOrder;
@@ -9,12 +9,11 @@ import net.ddns.armen181.cafe.cafe_manager.repository.CafeTableRepository;
 import net.ddns.armen181.cafe.cafe_manager.service.CafeTableService;
 import net.ddns.armen181.cafe.cafe_manager.service.CaffeTableService;
 import net.ddns.armen181.cafe.cafe_manager.service.UserService;
+import net.ddns.armen181.cafe.cafe_manager.util.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -32,7 +31,7 @@ public class CafeTableServiceImpl implements CafeTableService {
     }
 
     @Override
-    public CafeTable create (String name) {
+    public CafeTable create(String name) {
         CafeTable cafeTable = new CafeTable();
         cafeTable.setName(name);
         cafeTable.setIsAttachOrder(false);
@@ -41,62 +40,47 @@ public class CafeTableServiceImpl implements CafeTableService {
     }
 
     @Override
-    public Set<CafeTable> getAll() {
+    public List<CafeTable> getAll() {
         log.info("Try to getAll CafeTable ");
-        return Sets.newHashSet(cafeTableRepository.findAll());
+        return Lists.newArrayList(cafeTableRepository.findAll());
     }
 
     @Override
-    public Optional<List<CafeTable>> getAll(String userName) {
+    public List<CafeTable> getAll(String userName) {
         log.info("Try to getAll CafeTable by userName -> {}", userName);
-        return cafeTableRepository.findAllByUserName(userName);
+        return cafeTableRepository.findAllByUserName(userName).orElseThrow(() -> new NotFoundException("Cannot get All Cafe Tables by Id"));
     }
 
     @Override
-    public Optional<CafeTable> get(Long id) {
+    public CafeTable get(Long id) {
         log.info("Try to get CafeTable by name -> {}", id);
-        return cafeTableRepository.findById(id);
+        return cafeTableRepository.findById(id).orElseThrow(() -> new NotFoundException("Cannot get Cafe Table by Id"));
     }
 
     @Override
     public void remove(Long id) {
-        Optional<CafeTable> cafeTable = cafeTableRepository.findById(id);
-        cafeTable.ifPresent(cafeTableRepository::delete);
         log.info("Try to remove CafeTable by name -> {}", id);
+        CafeTable cafeTable = cafeTableRepository.findById(id).orElseThrow(() -> new NotFoundException("Cannot get Cafe Table by Id for remove"));
+        cafeTableRepository.delete(cafeTable);
     }
 
     @Override
     @Transactional
     public CafeTable signTableOrder(Long cafeTableId, Long tableOrderId) {
-        Optional<CafeTable> cafeTable = cafeTableRepository.findById(cafeTableId);
-        if (cafeTable.isPresent()) {
-            Optional<TableOrder> optionalTableOrder = tableOrderService.get(tableOrderId);
-            if (optionalTableOrder.isPresent()) {
-
-                 cafeTable.get().addTableOrder(optionalTableOrder.get());
-                log.info("Try to sign CafeTable by id -> {}, to TableOrder by Id -> {}", cafeTableId, tableOrderId);
-                 return cafeTableRepository.save(cafeTable.get());
-            }
-            log.info("Cannot find order by ID -> {}", tableOrderId);
-        }
-        log.info("Cannot find table by ID -> {}", cafeTableId);
-        return new CafeTable();
+        CafeTable cafeTable = cafeTableRepository.findById(cafeTableId).orElseThrow(() -> new NotFoundException("Cannot get Cafe Table by Id for signTableOrder"));
+        TableOrder tableOrder = tableOrderService.get(tableOrderId);
+        cafeTable.addTableOrder(tableOrder);
+        log.info("Try to sign CafeTable by id -> {}, to TableOrder by Id -> {}", cafeTableId, tableOrderId);
+        return cafeTableRepository.save(cafeTable);
     }
 
     @Override
     public CafeTable signTableWaiter(Long cafeTableId, Long waiterId) {
-        Optional<CafeTable> cafeTable = cafeTableRepository.findById(cafeTableId);
-        if (cafeTable.isPresent()) {
-            Optional<User> user = userService.get(waiterId);
-            if (user.isPresent()) {
+        CafeTable cafeTable = cafeTableRepository.findById(cafeTableId).orElseThrow(() -> new NotFoundException("Cannot get Cafe Table by Id for signTableWaiter"));
+        User user = userService.get(waiterId);
+        user.addCafeTable(cafeTable);
+        log.info("Try to sign CafeTable by id -> {}, to User by Id -> {}", cafeTableId, waiterId);
+        return cafeTableRepository.save(cafeTable);
 
-                user.get().addCafeTable(cafeTable.get());
-                log.info("Try to sign CafeTable by id -> {}, to User by Id -> {}", cafeTableId, waiterId);
-                return cafeTableRepository.save(cafeTable.get());
-            }
-            log.info("Cannot find order by ID -> {}", waiterId);
-        }
-        log.info("Cannot find table by ID -> {}", cafeTableId);
-        return new CafeTable();
     }
 }

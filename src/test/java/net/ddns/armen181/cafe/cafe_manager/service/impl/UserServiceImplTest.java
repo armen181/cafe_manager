@@ -30,8 +30,8 @@ public class UserServiceImplTest {
     @Test
     @DirtiesContext
     public void create() {
-        userService.create("Armen.181@gmail.com","Armen","Hovhannisyan","123456", Role.WAITER);
-        assertTrue(userRepository.findByEMail("Armen.181@gmail.com").isPresent());
+        userService.create("UserServiceImplTest","UserServiceImplTest","UserServiceImplTest","123456", Role.WAITER);
+        assertTrue(userRepository.findByEMail("UserServiceImplTest").isPresent());
     }
 
 }

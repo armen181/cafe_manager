@@ -1,7 +1,10 @@
 package net.ddns.armen181.cafe.cafe_manager.Dto;
 
 import lombok.Data;
+import net.ddns.armen181.cafe.cafe_manager.domain.ProductInOrder;
 import net.ddns.armen181.cafe.cafe_manager.enums.OrderStatus;
+
+import java.util.Set;
 
 @Data
 public class TableOrderDto {
@@ -16,4 +19,6 @@ public class TableOrderDto {
     private String userName;
 
     private OrderStatus orderStatus;
+
+    private Set<ProductInOrder> productInOrders;
 }

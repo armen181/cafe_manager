@@ -2,6 +2,7 @@ package net.ddns.armen181.cafe.cafe_manager.controller;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import net.ddns.armen181.cafe.cafe_manager.Dto.ProductDto;
 import net.ddns.armen181.cafe.cafe_manager.domain.Product;
 import net.ddns.armen181.cafe.cafe_manager.service.ProductService;
 import org.springframework.http.HttpStatus;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/rest")
@@ -28,9 +29,9 @@ public class ProductController {
 
     @GetMapping("/productCreate")
     @PreAuthorize("hasAnyRole('MANAGER')")
-    public ResponseEntity<Product> productInOrderCreate(@NonNull @RequestHeader String name) {
-       Product product = productService.create(name);
-        return new ResponseEntity<>(product,product.getId()!=null?HttpStatus.OK:HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ProductDto> productInOrderCreate(@NonNull @RequestHeader String name) {
+        Product product = productService.create(name);
+        return new ResponseEntity<>(ProductToDto(product), HttpStatus.OK);
     }
 
     @GetMapping("/productRemove")
@@ -42,29 +43,36 @@ public class ProductController {
 
     @GetMapping("/productGet")
     @PreAuthorize("hasAnyRole('MANAGER', 'WAITER')")
-    public ResponseEntity<Product> productInOrderCreate(@NonNull @RequestHeader Long id) {
-        Optional<Product> product = productService.get(id);
-        return product.map(product1 -> new ResponseEntity<>(product1, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(new Product(), HttpStatus.BAD_REQUEST));
+    public ResponseEntity<ProductDto> productInOrderCreate(@NonNull @RequestHeader Long id) {
+        Product product = productService.get(id);
+        return new ResponseEntity<>(ProductToDto(product), HttpStatus.OK);
     }
 
     @GetMapping("/productGetByName")
     @PreAuthorize("hasAnyRole('MANAGER')")
-    public ResponseEntity<Product> productGetByName(@NonNull @RequestHeader String productName) {
-        Optional<Product> product = productService.get(productName);
-        return product.map(product1 -> new ResponseEntity<>(product1, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(new Product(), HttpStatus.BAD_REQUEST));
+    public ResponseEntity<ProductDto> productGetByName(@NonNull @RequestHeader String productName) {
+        Product product = productService.get(productName);
+        return new ResponseEntity<>(ProductToDto(product), HttpStatus.OK);
     }
 
     @GetMapping("/productGetAll")
     @PreAuthorize("hasAnyRole('MANAGER','WAITER')")
-    public ResponseEntity<List<Product>> productGetAll() {
-        return new ResponseEntity<>(productService.getAll(),HttpStatus.OK);
+    public ResponseEntity<List<ProductDto>> productGetAll() {
+        final List<ProductDto> products = productService.getAll().stream().map(this::ProductToDto).collect(Collectors.toList());
+        return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
     @GetMapping("/productEdit")
     @PreAuthorize("hasAnyRole('MANAGER')")
-    public ResponseEntity<Product> productGetAll(@NonNull @RequestHeader Long id, @NonNull @RequestHeader String productName) {
-       Product product = productService.edit(id,productName);
-        return new ResponseEntity<>(product, product.getId()!=null?HttpStatus.OK:HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ProductDto> productGetAll(@NonNull @RequestHeader Long id, @NonNull @RequestHeader String productName) {
+        Product product = productService.edit(id, productName);
+        return new ResponseEntity<>(ProductToDto(product), HttpStatus.OK);
     }
 
+    private ProductDto ProductToDto(Product product) {
+        ProductDto productDto = new ProductDto();
+        productDto.setId(product.getId());
+        productDto.setName(product.getName());
+        return productDto;
+    }
 }

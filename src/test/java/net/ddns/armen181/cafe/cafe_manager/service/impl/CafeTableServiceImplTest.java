@@ -38,14 +38,12 @@ public class CafeTableServiceImplTest {
       User user = new User();
       user.setId(1L);
       user.setUserPassword("1234");
-      user.setLastName("Hovhannisyan");
-      user.setFirsName("Armen");
-      user.setEMail("Armen.181@gmail.com");
+      user.setLastName("CafeTableServiceImplTest");
+      user.setFirsName("CafeTableServiceImplTest");
+      user.setEMail("CafeTableServiceImplTest");
       user.setRole(Role.WAITER);
-
      CafeTable cafeTable = cafeTableService.create("TestCafeTableService");
      user.addCafeTable(cafeTable);
-
      userRepository.save(user);
 
     }
@@ -59,27 +57,28 @@ public class CafeTableServiceImplTest {
 
     @Test
     public void getAll() {
-     Set<CafeTable> set = cafeTableService.getAll();
-     assertTrue(set.size()>0);
+     List<CafeTable> list = cafeTableService.getAll();
+     assertTrue(list.size()>0);
     }
 
     @Test
     public void getAll1() {
-     Optional<List<CafeTable>> set = cafeTableService.getAll("Armen.181@gmail.com");
-     assertTrue(set.isPresent());
+     List<CafeTable> set = cafeTableService.getAll("CafeTableServiceImplTest");
+     assertTrue(set.size()>0);
     }
 
     @Test
     public void get() {
-     Optional<CafeTable> set = cafeTableService.get(1L);
-     assertTrue(set.isPresent());
+
+     CafeTable cafeTable = cafeTableService.get(cafeTableService.getAll().get(0).getId());
+        assertNotNull(cafeTable.getId());
     }
 
     @Test
     public void remove() {
      cafeTableService.remove(1L);
      Optional<CafeTable> set = cafeTableRepository.findById(1L);
-     assertTrue(set.isPresent());
+     assertTrue(!set.isPresent());
 
     }
 

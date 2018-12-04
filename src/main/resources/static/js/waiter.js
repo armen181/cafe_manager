@@ -2,18 +2,7 @@ $(document).ready(function () {
 
     // ================== Read All CafeTables and write into tree===============
     $('body').on("click", ".tableList", function (e) {
-        var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": "/rest/tableGet",
-            "method": "GET",
-            "headers": {}
-        };
-
-        $.ajax(settings).done(function (response) {
-            console.log(response);
-            tableList(response);
-        });
+        update();
     });
 
 
@@ -59,7 +48,7 @@ $(document).ready(function () {
 
 
             $.ajax(settings).done(function (response2) {
-
+             update();
                 $('#creatAndAddOrderToTable').modal('hide');
 
             });
@@ -104,6 +93,7 @@ $(document).ready(function () {
             }
         };
         $.ajax(settings).done(function (response) {
+            update();
             $('#removeOrder').modal('hide');
         });
 
@@ -134,6 +124,7 @@ $(document).ready(function () {
             }
         };
         $.ajax(settings).done(function (response) {
+            update();
             $('#editOrder').modal('hide');
         });
 
@@ -216,8 +207,7 @@ $(document).ready(function () {
 
 
                 $.ajax(settings2).done(function (response2) {
-                    console.log(response2);
-
+                    update();
                     $('#addProductInOrder').modal('hide');
 
                 });
@@ -250,6 +240,7 @@ $(document).ready(function () {
             }
         };
         $.ajax(settings).done(function (response) {
+            update();
             $('#removeProductInOrder').modal('hide');
         });
 
@@ -281,6 +272,7 @@ $(document).ready(function () {
             }
         };
         $.ajax(settings).done(function (response) {
+            update();
             $('#editProductInOrder').modal('hide');
         });
 
@@ -445,4 +437,19 @@ function productInOrderUL(response) {
     });
     html+="";
     return html;
+}
+
+function update() {
+    var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": "/rest/tableGet",
+        "method": "GET",
+        "headers": {}
+    };
+
+    $.ajax(settings).done(function (response) {
+        tableList(response);
+    });
+
 }

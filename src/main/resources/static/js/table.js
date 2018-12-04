@@ -2,18 +2,7 @@ $(document).ready(function () {
 
     // ================== Read All CafeTables and write into tree===============
     $('body').on("click", ".tableList", function (e) {
-        var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": "/rest/tableGetAll",
-            "method": "GET",
-            "headers": {}
-        };
-
-        $.ajax(settings).done(function (response) {
-            console.log(response);
-            tableList(response);
-        });
+        updateTable();
     });
 
     //===========  open  table create model ====================
@@ -38,7 +27,7 @@ $(document).ready(function () {
             }
         };
         $.ajax(settings).done(function (response) {
-            console.log(response);
+            updateTable();
             $('#createTable').modal('hide');
 
         });
@@ -46,7 +35,7 @@ $(document).ready(function () {
 
     });
 
-     //===========  open  Table delete model ====================
+    //===========  open  Table delete model ====================
     $('body').on("click", ".deleteTable", function (e) {
         $('#tableIdForRemove').text(e.currentTarget.value);
         $('#removeTable').modal({
@@ -69,6 +58,7 @@ $(document).ready(function () {
             }
         };
         $.ajax(settings).done(function (response) {
+            updateTable();
             $('#removeTable').modal('hide');
         });
 
@@ -82,16 +72,14 @@ $(document).ready(function () {
             "crossDomain": true,
             "url": "/rest/userGetAll",
             "method": "GET",
-            "headers": {
-            }
+            "headers": {}
         };
 
         $.ajax(settings).done(function (response) {
             var html = "";
-            html +="<select class=\"form-control chosen-select btn-block\" id=\"signUser\">";
-            response.forEach(function (x)
-            {
-                if(x.role ==="WAITER") {
+            html += "<select class=\"form-control chosen-select btn-block\" id=\"signUser\">";
+            response.forEach(function (x) {
+                if (x.role === "WAITER") {
                     html += "<option value=\"" + x.id + "\">\n" +
                         "       " + x.email + "\n" +
                         "                                    </option>";
@@ -124,6 +112,7 @@ $(document).ready(function () {
 
 
         $.ajax(settings).done(function (response) {
+            updateTable();
             $('#signTableToUser').modal('hide');
 
         });
@@ -169,7 +158,7 @@ $(document).ready(function () {
 
 
             $.ajax(settings).done(function (response2) {
-
+                updateTable();
                 $('#creatAndAddOrderToTable').modal('hide');
 
             });
@@ -214,6 +203,7 @@ $(document).ready(function () {
             }
         };
         $.ajax(settings).done(function (response) {
+            updateTable();
             $('#removeOrder').modal('hide');
         });
 
@@ -244,6 +234,7 @@ $(document).ready(function () {
             }
         };
         $.ajax(settings).done(function (response) {
+            updateTable();
             $('#editOrder').modal('hide');
         });
 
@@ -252,23 +243,21 @@ $(document).ready(function () {
 
     //===========  open  Product in order to Order ====================
     $('body').on("click", ".addProductInOrder", function (e) {
-            var settings = {
+        var settings = {
             "async": true,
             "crossDomain": true,
             "url": "/rest/productGetAll",
             "method": "GET",
-            "headers": {
-            }
+            "headers": {}
         };
 
         $.ajax(settings).done(function (response) {
             var html = "";
-            html +="<select class=\"form-control chosen-select btn-block\" id=\"addProductInOrderToProduct\">";
-            response.forEach(function (x)
-            {
-                        html += "<option value=\"" + x.id + "\">\n" +
-                        "       " + x.name + "\n" +
-                        "                                    </option>";
+            html += "<select class=\"form-control chosen-select btn-block\" id=\"addProductInOrderToProduct\">";
+            response.forEach(function (x) {
+                html += "<option value=\"" + x.id + "\">\n" +
+                    "       " + x.name + "\n" +
+                    "                                    </option>";
             });
             $('#addProductInOrderToProduct').replaceWith(html + "</select>");
         });
@@ -297,8 +286,6 @@ $(document).ready(function () {
         $.ajax(settings).done(function (response) {
 
 
-
-
             var settings1 = {
                 "async": true,
                 "crossDomain": true,
@@ -307,7 +294,7 @@ $(document).ready(function () {
                 "headers": {
                     "productId": $('#addProductInOrderToProduct').val(),
                     "praductinorderid": response.id,
-                    "amount":response.amount
+                    "amount": response.amount
                 }
             };
 
@@ -327,7 +314,7 @@ $(document).ready(function () {
 
                 $.ajax(settings2).done(function (response2) {
                     console.log(response2);
-
+updateTable();
                     $('#addProductInOrder').modal('hide');
 
                 });
@@ -360,6 +347,7 @@ $(document).ready(function () {
             }
         };
         $.ajax(settings).done(function (response) {
+            updateTable();
             $('#removeProductInOrder').modal('hide');
         });
 
@@ -391,6 +379,7 @@ $(document).ready(function () {
             }
         };
         $.ajax(settings).done(function (response) {
+            updateTable();
             $('#editProductInOrder').modal('hide');
         });
 
@@ -400,176 +389,191 @@ $(document).ready(function () {
 });
 
 function tableList(response) {
-     var html = "<div id=\"table\">\n";
+    var html = "<div id=\"table\">\n";
 
     response.forEach(function (x) {
 
-      html+="        <nav class=\"navbar bg-white navbar-light\">\n"+
-          "<div class=\"row\">\n" +
-          "                <button class=\"navbar-toggler btn-info\" type=\"button\" >\n" +
-          "                    "+ x.id + "\n " +
-          "                </button>\n" +
-          "                <button class=\"navbar-toggler btn-secondary\" type=\"button\" >\n" +
-          "                    "+ x.name + "\n" +
-          "                </button>\n";
+        html += "        <nav class=\"navbar bg-white navbar-light\">\n" +
+            "<div class=\"row\">\n" +
+            "                <button class=\"navbar-toggler btn-info\" type=\"button\" >\n" +
+            "                    " + x.id + "\n " +
+            "                </button>\n" +
+            "                <button class=\"navbar-toggler btn-secondary\" type=\"button\" >\n" +
+            "                    " + x.name + "\n" +
+            "                </button>\n";
 
-      if(x.userName == null){
-          html+="</div>"
-      }    else {
-       html+="                <button class=\"navbar-toggler btn-primary\" type=\"button\" >\n" +
-          "                    " + x.userName  +
-          "                </button></div>"
-      }
+        if (x.userName == null) {
+            html += "</div>"
+        } else {
+            html += "                <button class=\"navbar-toggler btn-primary\" type=\"button\" >\n" +
+                "                    " + x.userName +
+                "                </button></div>"
+        }
 
-        if(x.userName == null){
+        if (x.userName == null) {
             html += "<div class=\"row\">\n" +
-                "                <button class=\"navbar-toggler btn-primary signToUser\" type=\"button\" value=\""+x.id+"\">\n" +
+                "                <button class=\"navbar-toggler btn-primary signToUser\" type=\"button\" value=\"" + x.id + "\">\n" +
                 "                    Attach Waiter\n" +
                 "                </button>\n" +
-                "                <button class=\"navbar-toggler btn-danger deleteTable\" type=\"button\" value=\""+x.id+"\">\n" +
+                "                <button class=\"navbar-toggler btn-danger deleteTable\" type=\"button\" value=\"" + x.id + "\">\n" +
                 "                    Delete\n" +
-                "                </button>\n" ;
-        }else {
+                "                </button>\n";
+        } else {
             html += "<div class=\"row\">\n" +
-                "                <button class=\"navbar-toggler btn-info addOrder\" type=\"button\" value=\""+x.id+"\">\n" +
+                "                <button class=\"navbar-toggler btn-info addOrder\" type=\"button\" value=\"" + x.id + "\">\n" +
                 "                    Add Order\n" +
                 "                </button>\n" +
-                "                <button class=\"navbar-toggler btn-primary signToUser\" type=\"button\" value=\""+x.id+"\">\n" +
+                "                <button class=\"navbar-toggler btn-primary signToUser\" type=\"button\" value=\"" + x.id + "\">\n" +
                 "                    Attach Waiter\n" +
                 "                </button>\n" +
-                "                <button class=\"navbar-toggler btn-danger deleteTable\" type=\"button\" value=\""+x.id+"\">\n" +
+                "                <button class=\"navbar-toggler btn-danger deleteTable\" type=\"button\" value=\"" + x.id + "\">\n" +
                 "                    Delete\n" +
-                "                </button>\n" ;
+                "                </button>\n";
 
         }
 
-        html+= "            <button class=\"navbar-toggler collapsed\" type=\"button\" data-toggle=\"collapse\" data-target=\"#x"+x.id + "_"  + x.userName+"\" aria-expanded=\"false\">\n" +
+        html += "            <button class=\"navbar-toggler collapsed\" type=\"button\" data-toggle=\"collapse\" data-target=\"#x" + x.id + "_" + x.userName + "\" aria-expanded=\"false\">\n" +
             "                <span class=\"navbar-toggler-icon\"></span>\n" +
             "            </button>\n" +
             "\n" +
             "            </div>"
 
-        html+="<div class=\"navbar-collapse collapse\" id=\"x"+  x.id + "_"  + x.userName+"\" style=\"\">\n";
+        html += "<div class=\"navbar-collapse collapse\" id=\"x" + x.id + "_" + x.userName + "\" style=\"\">\n";
 
-        html+=orderListUL(x.tableOrders);
+        html += orderListUL(x.tableOrders);
 
 
-        html+= "            </div>\n" +
+        html += "            </div>\n" +
             "        </nav>";
 
     });
-    $('#table').replaceWith( html );
+    $('#table').replaceWith(html);
 }
+
 function orderListUL(response) {
     var html = "";
     response.forEach(function (x) {
 
-        html+="<ul class=\"nav navbar-nav\">\n" +
-            "                    <li class=\"nav-item\">"+
-            "<nav class=\"navbar bg-white navbar-light\">"+
+        html += "<ul class=\"nav navbar-nav\">\n" +
+            "                    <li class=\"nav-item\">" +
+            "<nav class=\"navbar bg-white navbar-light\">" +
             "<div class=\"row\">\n" +
             "                <button class=\"navbar-toggler btn-info\" type=\"button\" >\n" +
-            "                    "+ x.id + "\n " +
+            "                    " + x.id + "\n " +
             "                </button>\n" +
             "                <button class=\"navbar-toggler btn-secondary\" type=\"button\" >\n" +
-            "                    "+ x.name + "\n" +
-            "                </button>\n"+
+            "                    " + x.name + "\n" +
+            "                </button>\n" +
             "                <button class=\"navbar-toggler btn-primary\" type=\"button\" >\n" +
-                "                    " + x.orderStatus  +
-                "                </button></div>"
+            "                    " + x.orderStatus +
+            "                </button></div>"
 
 
-        if(x.orderStatus === "CLOSE"){
+        if (x.orderStatus === "CLOSE") {
             html += "<div class=\"row\">\n" +
-                "                <button class=\"navbar-toggler btn-danger deleteOrder\" type=\"button\" value=\""+x.id+"\">\n" +
+                "                <button class=\"navbar-toggler btn-danger deleteOrder\" type=\"button\" value=\"" + x.id + "\">\n" +
                 "                    Delete\n" +
-                "                </button>\n" ;
-        }else {
+                "                </button>\n";
+        } else {
             html += "<div class=\"row\">\n" +
-                "                <button class=\"navbar-toggler btn-info addProductInOrder\" type=\"button\" value=\"" +x.id+"\">\n" +
+                "                <button class=\"navbar-toggler btn-info addProductInOrder\" type=\"button\" value=\"" + x.id + "\">\n" +
                 "                    Add Products\n" +
                 "                </button>\n" +
-                "                <button class=\"navbar-toggler btn-secondary editOrder\" type=\"button\" value=\""+x.id+"\">\n" +
+                "                <button class=\"navbar-toggler btn-secondary editOrder\" type=\"button\" value=\"" + x.id + "\">\n" +
                 "                    Edit\n" +
                 "                </button>\n" +
-                "                <button class=\"navbar-toggler btn-danger deleteOrder\" type=\"button\" value=\""+x.id+"\">\n" +
+                "                <button class=\"navbar-toggler btn-danger deleteOrder\" type=\"button\" value=\"" + x.id + "\">\n" +
                 "                    Delete\n" +
-                "                </button>\n" ;
+                "                </button>\n";
 
         }
 
-        html+= "            <button class=\"navbar-toggler collapsed\" type=\"button\" data-toggle=\"collapse\" data-target=\"#y"+x.id + "_"  + x.userName+"\" aria-expanded=\"false\">\n" +
+        html += "            <button class=\"navbar-toggler collapsed\" type=\"button\" data-toggle=\"collapse\" data-target=\"#y" + x.id + "_" + x.userName + "\" aria-expanded=\"false\">\n" +
             "                <span class=\"navbar-toggler-icon\"></span>\n" +
             "            </button>\n" +
             "\n" +
             "            </div>"
 
-        html+="<div class=\"navbar-collapse collapse\" id=\"y"+  x.id + "_"  + x.userName+"\" style=\"\">\n" ;
+        html += "<div class=\"navbar-collapse collapse\" id=\"y" + x.id + "_" + x.userName + "\" style=\"\">\n";
 
-        html+=productInOrderUL(x.productInOrders);
+        html += productInOrderUL(x.productInOrders);
 
-            html+= "            </div>\n" +
+        html += "            </div>\n" +
             "        </nav></li>";
 
     });
-    html+="</ul>";
+    html += "</ul>";
     return html;
 }
+
 function productInOrderUL(response) {
     var html = "";
     response.forEach(function (x) {
 
-        html+="<ul class=\"nav navbar-nav\">\n" +
-            "                    <li class=\"nav-item\">"+
-            "<nav class=\"navbar bg-white navbar-light\">"+
+        html += "<ul class=\"nav navbar-nav\">\n" +
+            "                    <li class=\"nav-item\">" +
+            "<nav class=\"navbar bg-white navbar-light\">" +
             "<div class=\"row\">\n" +
             "                <button class=\"navbar-toggler btn-info\" type=\"button\" >\n" +
-            "                    "+ x.product.name + "\n " +
+            "                    " + x.product.name + "\n " +
             "                </button>\n" +
             "                <button class=\"navbar-toggler btn-secondary\" type=\"button\" >\n" +
-            "                    "+ x.status  + "\n" +
-            "                </button>\n"+
+            "                    " + x.status + "\n" +
+            "                </button>\n" +
             "                <button class=\"navbar-toggler btn-primary\" type=\"button\" >\n" +
-            "                    " + x.amount  +
+            "                    " + x.amount +
             "                </button></div>"
 
 
-        if(x.orderStatus === "CLOSE"){
+        if (x.orderStatus === "CLOSE") {
             html += "<div class=\"row\">\n" +
-                "                <button class=\"navbar-toggler btn-danger deleteProductInOrder\" type=\"button\" value=\""+x.id+"\">\n" +
+                "                <button class=\"navbar-toggler btn-danger deleteProductInOrder\" type=\"button\" value=\"" + x.id + "\">\n" +
                 "                    Delete\n" +
-                "                </button>\n" ;
-        }else {
+                "                </button>\n";
+        } else {
             html += "<div class=\"row\">\n" +
-                "                <button class=\"navbar-toggler btn-secondary editProductInOrder\" type=\"button\" value=\""+x.id+"\">\n" +
+                "                <button class=\"navbar-toggler btn-secondary editProductInOrder\" type=\"button\" value=\"" + x.id + "\">\n" +
                 "                    Edit\n" +
                 "                </button>\n" +
-                "                <button class=\"navbar-toggler btn-danger deleteProductInOrder\" type=\"button\" value=\""+x.id+"\">\n" +
+                "                <button class=\"navbar-toggler btn-danger deleteProductInOrder\" type=\"button\" value=\"" + x.id + "\">\n" +
                 "                    Delete\n" +
-                "                </button>\n" ;
+                "                </button>\n";
 
         }
 
-        html+= "            <button class=\"navbar-toggler collapsed\" type=\"button\" data-toggle=\"collapse\" data-target=\"#z"+x.id + "_"  + x.status+"\" aria-expanded=\"false\">\n" +
+        html += "            <button class=\"navbar-toggler collapsed\" type=\"button\" data-toggle=\"collapse\" data-target=\"#z" + x.id + "_" + x.status + "\" aria-expanded=\"false\">\n" +
             "                <span class=\"navbar-toggler-icon\"></span>\n" +
             "            </button>\n" +
             "\n" +
             "            </div>"
 
-        html+="<div class=\"navbar-collapse collapse\" id=\"z"+  x.id + "_"  + x.status+"\" style=\"\">\n" +
+        html += "<div class=\"navbar-collapse collapse\" id=\"z" + x.id + "_" + x.status + "\" style=\"\">\n" +
             "                <ul class=\"nav navbar-nav\">\n" +
             "                    <li class=\"nav-item\">\n" +
-            "                        <a class=\"nav-link\" >"+ x.product.id+"</a>\n" +
+            "                        <a class=\"nav-link\" >" + x.product.id + "</a>\n" +
             "                    </li>\n" +
             "                    <li class=\"nav-item\">\n" +
-            "                        <a class=\"nav-link\" >"+ x.product.name+"</a>\n" +
+            "                        <a class=\"nav-link\" >" + x.product.name + "</a>\n" +
             "                    </li>\n" +
             "                </ul>\n" +
             "            </div>\n" +
             "        </nav></li>";
 
     });
-    html+="";
+    html += "";
     return html;
 }
 
+function updateTable() {
+    var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": "/rest/tableGetAll",
+        "method": "GET",
+        "headers": {}
+    };
+
+    $.ajax(settings).done(function (response) {
+        tableList(response);
+    });
+}

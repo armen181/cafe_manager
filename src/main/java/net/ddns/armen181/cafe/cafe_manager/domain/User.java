@@ -14,7 +14,6 @@ import java.util.Set;
 
 @Entity
 @Data
-//@EqualsAndHashCode(exclude = {})
 @Table(name = "user")
 public class User implements UserDetails {
     //=================  Fields =======================
@@ -58,10 +57,6 @@ public class User implements UserDetails {
         this.cafeTables.add(cafeTable);
         return this;
     }
-
-
-
-
 
 
     @Override

@@ -32,26 +32,14 @@ $(document).ready(function () {
         };
 
         $.ajax(settings).done(function (response) {
+            updateList();
             $('#createUser').modal('hide');
         });
 
     });
 
     $('body').on("click", ".userList", function (e) {
-        var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": "/rest/userGetAll",
-            "method": "GET",
-            "headers": {
-            }
-        }
-
-        $.ajax(settings).done(function (response) {
-            updateUserList(response);
-        });
-
-
+        updateList();
     });
 
     //===========  User remove model ====================
@@ -66,6 +54,7 @@ $(document).ready(function () {
             }
         };
         $.ajax(settings).done(function (response) {
+            updateList();
             $('#removeUser').modal('hide');
 
         });
@@ -115,4 +104,20 @@ function updateUserList(response) {
 
     })
     $('#table').replaceWith( html+"</div>" );
+}
+function updateList() {
+    var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": "/rest/userGetAll",
+        "method": "GET",
+        "headers": {
+        }
+    }
+
+    $.ajax(settings).done(function (response) {
+        updateUserList(response);
+    });
+
+
 }

@@ -1,6 +1,9 @@
 package net.ddns.armen181.cafe.cafe_manager.Dto;
 
 import lombok.Data;
+import net.ddns.armen181.cafe.cafe_manager.domain.TableOrder;
+
+import java.util.Set;
 
 @Data
 public class CafeTableDto {
@@ -12,7 +15,7 @@ public class CafeTableDto {
 
     private String userName;
 
-    private Boolean isOrder;
-
     private Boolean isAttachOrder;
+
+    private Set<TableOrder> tableOrders;
 }

@@ -1,7 +1,6 @@
 package net.ddns.armen181.cafe.cafe_manager.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,7 +14,7 @@ import java.util.Set;
 
 @Entity
 @Data
-@EqualsAndHashCode(exclude = {"cafeTable","productInOrders"})
+@EqualsAndHashCode(exclude = {"cafeTable", "productInOrders"})
 @Table(name = "tableOrder")
 public class TableOrder implements Serializable {
 
@@ -38,10 +37,9 @@ public class TableOrder implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Getter(AccessLevel.NONE)
-    @JsonIgnore
     private CafeTable cafeTable;
 
-  @OneToMany(mappedBy = "tableOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "tableOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<ProductInOrder> productInOrders = new HashSet<>();
 
 
@@ -49,7 +47,6 @@ public class TableOrder implements Serializable {
         productInOrder.setTableOrder(this);
         productInOrder.setOrderName(this.name);
         this.productInOrders.add(productInOrder);
-
         return this;
     }
 

@@ -6,11 +6,11 @@ import net.ddns.armen181.cafe.cafe_manager.domain.User;
 import net.ddns.armen181.cafe.cafe_manager.enums.Role;
 import net.ddns.armen181.cafe.cafe_manager.repository.UserRepository;
 import net.ddns.armen181.cafe.cafe_manager.service.UserService;
+import net.ddns.armen181.cafe.cafe_manager.util.NotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -24,10 +24,8 @@ public class UserServiceImpl implements UserService {
     //============== wiring beans ==================
 
 
-
     @Override
     public User create(String eMail, String firstName, String lastName, String password, Role role) {
-
         User user = new User();
         user.setEMail(eMail);
         user.setFirsName(firstName);
@@ -39,15 +37,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> get(String eMail) {
+    public User get(String eMail) {
         log.info("Get user by eMail -> {}", eMail);
-        return userRepository.findByEMail(eMail);
+        return userRepository.findByEMail(eMail).orElseThrow(() -> new NotFoundException("User is not found by eMail"));
     }
 
     @Override
-    public Optional<User> get(Long id) {
+    public User get(Long id) {
         log.info("Get user by id -> {}", id);
-        return userRepository.findById(id);
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User Not found by Id"));
     }
 
     @Override
@@ -57,10 +55,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void remove(Long id) {
-
-        Optional<User> user = userRepository.findById(id);
-        user.ifPresent(userRepository::delete);
         log.info("Try to remove user by id -> {}", id);
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User Not found User by Id for remove"));
+        userRepository.delete(user);
     }
 
 

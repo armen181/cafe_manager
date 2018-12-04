@@ -2,16 +2,14 @@ package net.ddns.armen181.cafe.cafe_manager.service.impl;
 
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import net.ddns.armen181.cafe.cafe_manager.domain.Product;
 import net.ddns.armen181.cafe.cafe_manager.repository.ProductRepository;
 import net.ddns.armen181.cafe.cafe_manager.service.ProductService;
+import net.ddns.armen181.cafe.cafe_manager.util.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -33,14 +31,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product edit(Long id, String name) {
-        Optional<Product> product = this.get(id);
-        if (product.isPresent()) {
-            product.get().setName(name);
-            log.info("Try to edit Product by id -> {}", id);
-            return productRepository.save(product.get());
-        }
-        log.info("Cannot edit Product by id -> {}", id);
-        return new Product();
+        Product product = this.get(id);
+        product.setName(name);
+        log.info("Try to edit Product by id -> {}", id);
+        return productRepository.save(product);
     }
 
     @Override
@@ -50,21 +44,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Optional<Product> get(String name) {
+    public Product get(String name) {
         log.info("Try to get Product by name -> {}", name);
-        return productRepository.findByName(name);
+        return productRepository.findByName(name).orElseThrow(() -> new NotFoundException("Cannot get Product by Name"));
     }
 
     @Override
-    public Optional<Product> get(Long id) {
+    public Product get(Long id) {
         log.info("Try to get Product by id -> {}", id);
-        return productRepository.findById(id);
+        return productRepository.findById(id).orElseThrow(() -> new NotFoundException("Cannot get Product by Id"));
     }
 
     @Override
     public void remove(Long id) {
-        Optional<Product> product = productRepository.findById(id);
-        product.ifPresent(productRepository::delete);
         log.info("Try to delete Product by id -> {}", id);
+        Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Cannot get Product by Id for remove"));
+        productRepository.delete(product);
     }
 }

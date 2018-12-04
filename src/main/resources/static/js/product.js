@@ -21,7 +21,7 @@ $(document).ready(function () {
             }
         };
         $.ajax(settings).done(function (response) {
-            console.log(response);
+            update();
             $('#createProduct').modal('hide');
 
         });
@@ -30,19 +30,7 @@ $(document).ready(function () {
     });
 
     $('body').on("click", ".productList", function (e) {
-        var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": "/rest/productGetAll",
-            "method": "GET",
-            "headers": {
-            }
-        }
-
-        $.ajax(settings).done(function (response) {
-            updateProductList(response);
-        });
-
+       update();
 
     });
 
@@ -70,6 +58,7 @@ $(document).ready(function () {
             }
         };
         $.ajax(settings).done(function (response) {
+            update();
             $('#editProduct').modal('hide');
 
         });
@@ -100,6 +89,7 @@ $(document).ready(function () {
             }
         };
         $.ajax(settings).done(function (response) {
+            update();
             $('#removeProduct').modal('hide');
 
         });
@@ -130,4 +120,18 @@ function updateProductList(response) {
 
     })
     $('#table').replaceWith( html+"</div>" );
+}
+function update() {
+    var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": "/rest/productGetAll",
+        "method": "GET",
+        "headers": {
+        }
+    }
+
+    $.ajax(settings).done(function (response) {
+        updateProductList(response);
+    });
 }

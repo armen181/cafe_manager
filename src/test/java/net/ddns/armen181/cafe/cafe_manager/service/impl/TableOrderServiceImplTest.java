@@ -18,10 +18,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TableOrderServiceImplTest {
@@ -43,18 +42,15 @@ public class TableOrderServiceImplTest {
         User user = new User();
         user.setId(1L);
         user.setUserPassword("1234");
-        user.setLastName("Hovhannisyan");
-        user.setFirsName("Armen");
-        user.setEMail("Armen.181@gmail.com");
+        user.setLastName("TableOrderServiceImplTest");
+        user.setFirsName("TableOrderServiceImplTest");
+        user.setEMail("TableOrderServiceImplTest");
         user.setRole(Role.WAITER);
 
         CafeTable cafeTable = cafeTableService.create("TestCafeTableService");
         user.addCafeTable(cafeTable);
         TableOrder tableOrder = tableOrderService.create("OrderForTest");
         cafeTable.addTableOrder(tableOrder);
-
-
-
         userRepository.save(user);
 
 
@@ -63,6 +59,7 @@ public class TableOrderServiceImplTest {
     }
 
     @Test
+    @DirtiesContext
     public void create() {
         tableOrderService.create("OrderForTest_1");
         assertTrue(tableOrderRepository.findByName("OrderForTest_1").isPresent());
@@ -70,26 +67,26 @@ public class TableOrderServiceImplTest {
 
     @Test
     public void get() {
-        Optional<List<TableOrder>> tableOrderByName = tableOrderService.get("Armen.181@gmail.com");
-        Optional<TableOrder> tableOrder = tableOrderService.get(tableOrderByName.get().get(0).getId());
-        assertTrue(tableOrder.isPresent());
+        List<TableOrder> tableOrderByName = tableOrderService.get("TableOrderServiceImplTest");
+        TableOrder tableOrder = tableOrderService.get(tableOrderByName.get(0).getId());
+        assertNotNull(tableOrder.getId());
     }
 
     @Test
     public void get1() {
-        Optional<List<TableOrder>> tableOrder = tableOrderService.get("Armen.181@gmail.com");
-        assertTrue(tableOrder.isPresent());
+        List<TableOrder> tableOrder = tableOrderService.get("TableOrderServiceImplTest");
+        assertTrue(tableOrder.size()>0);
     }
 
     @Test
     public void getByTableName() {
-        Optional<List<TableOrder>> tableOrder = tableOrderService.getByTableName("TestCafeTableService");
-        assertTrue(tableOrder.isPresent());
+        List<TableOrder> tableOrder = tableOrderService.getByTableName("TestCafeTableService");
+        assertTrue(tableOrder.size()>0);
     }
 
     @Test
     public void getAll() {
-        Set<TableOrder> tableOrder = tableOrderService.getAll();
+        List<TableOrder> tableOrder = tableOrderService.getAll();
         assertTrue(tableOrder.size()>0);
     }
 

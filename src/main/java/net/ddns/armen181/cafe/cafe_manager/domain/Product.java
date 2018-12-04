@@ -1,6 +1,5 @@
 package net.ddns.armen181.cafe.cafe_manager.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -26,9 +25,8 @@ public class Product implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "product",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Getter(AccessLevel.NONE)
-    @JsonIgnore
     private Set<ProductInOrder> productInOrders = new HashSet<>();
 
 }

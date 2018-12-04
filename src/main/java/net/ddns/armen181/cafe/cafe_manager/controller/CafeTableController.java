@@ -2,6 +2,7 @@ package net.ddns.armen181.cafe.cafe_manager.controller;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import net.ddns.armen181.cafe.cafe_manager.Dto.CafeTableDto;
 import net.ddns.armen181.cafe.cafe_manager.domain.CafeTable;
 import net.ddns.armen181.cafe.cafe_manager.service.CafeTableService;
 import org.springframework.http.HttpStatus;
@@ -14,10 +15,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/rest")
@@ -33,40 +32,40 @@ public class CafeTableController {
 
     @GetMapping("/tableGetById")
     @PreAuthorize("hasAnyRole('MANAGER')")
-    public ResponseEntity<CafeTable> tableGetById(@NonNull @RequestHeader Long id) {
-        Optional<CafeTable> cafeTable = cafeTableService.get(id);
-        return cafeTable.map(cafeTable1 -> new ResponseEntity<>(cafeTable1, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(new CafeTable(), HttpStatus.BAD_REQUEST));
+    public ResponseEntity<CafeTableDto> tableGetById(@NonNull @RequestHeader Long id) {
+        CafeTable cafeTable = cafeTableService.get(id);
+        return new ResponseEntity<>(CafeTableToCafeTableDto(cafeTable), HttpStatus.OK);
     }
 
     @GetMapping("/tableCreate")
     @PreAuthorize("hasAnyRole('MANAGER')")
-    public ResponseEntity<CafeTable> tableCreate(@NonNull @RequestHeader String name) {
+    public ResponseEntity<CafeTableDto> tableCreate(@NonNull @RequestHeader String name) {
         CafeTable cafeTable = cafeTableService.create(name);
-        Optional<CafeTable> optionalCafeTable = cafeTableService.get(cafeTable.getId());
-        return optionalCafeTable.map(cafeTable1 -> new ResponseEntity<>(cafeTable1, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(new CafeTable(), HttpStatus.BAD_REQUEST));
+        return new ResponseEntity<>(CafeTableToCafeTableDto(cafeTable), HttpStatus.OK);
     }
 
     @GetMapping("/tableGetAll")
     @PreAuthorize("hasAnyRole('MANAGER')")
-    public ResponseEntity<Set<CafeTable>> tableGetAll() {
-        return new ResponseEntity<>(cafeTableService.getAll(), HttpStatus.OK);
+    public ResponseEntity<List<CafeTableDto>> tableGetAll() {
+        final List<CafeTableDto> cafeTableDtos = cafeTableService.getAll().stream().map(this::CafeTableToCafeTableDto).collect(Collectors.toList());
+        return new ResponseEntity<>(cafeTableDtos, HttpStatus.OK);
+    }
 
-          }
     @GetMapping("/tableSignOrder")
     @PreAuthorize("hasAnyRole('MANAGER','WAITER')")
-    public ResponseEntity<CafeTable> tableSignOrder(@NonNull @RequestHeader Long cafeTableId,@NonNull @RequestHeader Long tableOrderId) {
-        CafeTable cafeTable = cafeTableService.signTableOrder(cafeTableId,tableOrderId);
-        return new ResponseEntity<>(cafeTable, cafeTable.getId() != null ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CafeTableDto> tableSignOrder(@NonNull @RequestHeader Long cafeTableId, @NonNull @RequestHeader Long tableOrderId) {
+        CafeTable cafeTable = cafeTableService.signTableOrder(cafeTableId, tableOrderId);
+        return new ResponseEntity<>(CafeTableToCafeTableDto(cafeTable), HttpStatus.OK);
 
     }
 
     @GetMapping("/tableGet")
     @PreAuthorize("hasAnyRole('WAITER', 'MANAGER')")
-    public ResponseEntity<List<CafeTable>> tableGet() {
+    public ResponseEntity<List<CafeTableDto>> tableGet() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         String userName = securityContext.getAuthentication().getName();
-        Optional<List<CafeTable>> cafeTable = cafeTableService.getAll(userName);
-        return cafeTable.map(cafeTables -> new ResponseEntity<>(cafeTables, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<List<CafeTable>>(Collections.EMPTY_LIST, HttpStatus.BAD_REQUEST));
+        final List<CafeTableDto> cafeTableDtos = cafeTableService.getAll(userName).stream().map(this::CafeTableToCafeTableDto).collect(Collectors.toList());
+        return new ResponseEntity<>(cafeTableDtos, HttpStatus.OK);
 
     }
 
@@ -79,10 +78,20 @@ public class CafeTableController {
 
     @GetMapping("/tableSignUser")
     @PreAuthorize("hasAnyRole('MANAGER')")
-    public ResponseEntity<CafeTable> tableSignUser(@NonNull @RequestHeader Long cafeTableId,@NonNull @RequestHeader Long waiterId) {
-        CafeTable cafeTable = cafeTableService.signTableWaiter(cafeTableId,waiterId);
-        return new ResponseEntity<>(cafeTable, cafeTable.getId() != null ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CafeTableDto> tableSignUser(@NonNull @RequestHeader Long cafeTableId, @NonNull @RequestHeader Long waiterId) {
+        CafeTable cafeTable = cafeTableService.signTableWaiter(cafeTableId, waiterId);
+        return new ResponseEntity<>(CafeTableToCafeTableDto(cafeTable), HttpStatus.OK);
 
+    }
+
+    private CafeTableDto CafeTableToCafeTableDto(CafeTable cafeTable) {
+        CafeTableDto cafeTableDto = new CafeTableDto();
+        cafeTableDto.setId(cafeTable.getId());
+        cafeTableDto.setIsAttachOrder(cafeTable.getIsAttachOrder());
+        cafeTableDto.setName(cafeTable.getName());
+        cafeTableDto.setUserName(cafeTable.getUserName());
+        cafeTableDto.setTableOrders(cafeTable.getTableOrders());
+        return cafeTableDto;
     }
 
 }
