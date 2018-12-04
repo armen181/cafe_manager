@@ -14,4 +14,5 @@ public interface CafeTableService {
     Optional<CafeTable> get(Long id);
     void remove(Long id);
     CafeTable signTableOrder(Long cafeTableId, Long tableOrderId);
+    CafeTable signTableWaiter(Long cafeTableId, Long waiterId);
 }

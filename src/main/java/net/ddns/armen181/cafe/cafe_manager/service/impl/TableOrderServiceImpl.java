@@ -75,7 +75,7 @@ public class TableOrderServiceImpl implements CaffeTableService {
         if (tableOrder.isPresent()) {
             Optional<ProductInOrder> productInOrder = productInOrderService.get(productInOrderId);
             if (productInOrder.isPresent()) {
-                log.info("Try to Sign Order by id -> {}, and ProductInOrder by id - > {}", tableOrder, productInOrder);
+                log.info("Try to Sign Order by id -> {}, and ProductInOrder by id - > {}", tableOrderId, productInOrderId);
                 tableOrder.get().addProductInOrder(productInOrder.get());
                 return tableOrderRepository.save(tableOrder.get());
             }

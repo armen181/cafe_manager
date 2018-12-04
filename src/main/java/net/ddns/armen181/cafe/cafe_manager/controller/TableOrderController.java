@@ -72,7 +72,7 @@ public class TableOrderController {
     }
 
     @GetMapping("/orderRemoveById")
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('MANAGER','WAITER')")
     public ResponseEntity orderRemoveById(@NonNull @RequestHeader Long id) {
         tableOrderService.remove(id);
         return new ResponseEntity(HttpStatus.OK);

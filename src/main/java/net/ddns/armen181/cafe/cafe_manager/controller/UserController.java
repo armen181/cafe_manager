@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -36,6 +38,7 @@ public class UserController {
     }
 
     @PostMapping("/userCreat")
+    @PreAuthorize("hasAnyRole('MANAGER')")
     public ResponseEntity<UserDto> userCreat(@Valid @NonNull @RequestBody final UserDto userDto) {
         return UserDtoToUserConverter(userDto);
     }
@@ -77,6 +80,23 @@ public class UserController {
         userService.remove(id);
         log.info("Manager deleted User by Id, Manager -> {}, deleted user id -> {}",userName, id );
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping("/userGetAll")
+    @PreAuthorize("hasAnyRole('MANAGER')")
+    public ResponseEntity<List<UserDto>> userGetAll(){
+        List<UserDto> userDtos = new ArrayList<>();
+        userService.getAll().forEach(x->{
+            UserDto userDto = new UserDto();
+            userDto.setId(x.getId());
+            userDto.setEMail(x.getEMail());
+            userDto.setFirsName(x.getFirsName());
+            userDto.setLastName(x.getLastName());
+            userDto.setRole(x.getRole());
+            userDtos.add(userDto);
+        });
+        log.info("Manager Try get all Users");
+        return new ResponseEntity<>(userDtos,HttpStatus.OK);
     }
 
 

@@ -41,7 +41,7 @@ public class ProductController {
     }
 
     @GetMapping("/productGet")
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('MANAGER', 'WAITER')")
     public ResponseEntity<Product> productInOrderCreate(@NonNull @RequestHeader Long id) {
         Optional<Product> product = productService.get(id);
         return product.map(product1 -> new ResponseEntity<>(product1, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(new Product(), HttpStatus.BAD_REQUEST));
@@ -55,7 +55,7 @@ public class ProductController {
     }
 
     @GetMapping("/productGetAll")
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('MANAGER','WAITER')")
     public ResponseEntity<List<Product>> productGetAll() {
         return new ResponseEntity<>(productService.getAll(),HttpStatus.OK);
     }

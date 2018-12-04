@@ -53,7 +53,7 @@ public class CafeTableController {
 
           }
     @GetMapping("/tableSignOrder")
-    @PreAuthorize("hasAnyRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('MANAGER','WAITER')")
     public ResponseEntity<CafeTable> tableSignOrder(@NonNull @RequestHeader Long cafeTableId,@NonNull @RequestHeader Long tableOrderId) {
         CafeTable cafeTable = cafeTableService.signTableOrder(cafeTableId,tableOrderId);
         return new ResponseEntity<>(cafeTable, cafeTable.getId() != null ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
@@ -77,5 +77,12 @@ public class CafeTableController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @GetMapping("/tableSignUser")
+    @PreAuthorize("hasAnyRole('MANAGER')")
+    public ResponseEntity<CafeTable> tableSignUser(@NonNull @RequestHeader Long cafeTableId,@NonNull @RequestHeader Long waiterId) {
+        CafeTable cafeTable = cafeTableService.signTableWaiter(cafeTableId,waiterId);
+        return new ResponseEntity<>(cafeTable, cafeTable.getId() != null ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+
+    }
 
 }

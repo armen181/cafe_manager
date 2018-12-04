@@ -4,9 +4,11 @@ import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import net.ddns.armen181.cafe.cafe_manager.domain.CafeTable;
 import net.ddns.armen181.cafe.cafe_manager.domain.TableOrder;
+import net.ddns.armen181.cafe.cafe_manager.domain.User;
 import net.ddns.armen181.cafe.cafe_manager.repository.CafeTableRepository;
 import net.ddns.armen181.cafe.cafe_manager.service.CafeTableService;
 import net.ddns.armen181.cafe.cafe_manager.service.CaffeTableService;
+import net.ddns.armen181.cafe.cafe_manager.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +23,12 @@ public class CafeTableServiceImpl implements CafeTableService {
 
     private final CafeTableRepository cafeTableRepository;
     private final CaffeTableService tableOrderService;
+    private final UserService userService;
 
-    public CafeTableServiceImpl(CafeTableRepository cafeTableRepository, CaffeTableService tableOrderService) {
+    public CafeTableServiceImpl(CafeTableRepository cafeTableRepository, CaffeTableService tableOrderService, UserService userService) {
         this.cafeTableRepository = cafeTableRepository;
         this.tableOrderService = tableOrderService;
+        this.userService = userService;
     }
 
     @Override
@@ -73,9 +77,26 @@ public class CafeTableServiceImpl implements CafeTableService {
                 log.info("Try to sign CafeTable by id -> {}, to TableOrder by Id -> {}", cafeTableId, tableOrderId);
                  return cafeTableRepository.save(cafeTable.get());
             }
-            // log
+            log.info("Cannot find order by ID -> {}", tableOrderId);
         }
-        // log
-        return null;
+        log.info("Cannot find table by ID -> {}", cafeTableId);
+        return new CafeTable();
+    }
+
+    @Override
+    public CafeTable signTableWaiter(Long cafeTableId, Long waiterId) {
+        Optional<CafeTable> cafeTable = cafeTableRepository.findById(cafeTableId);
+        if (cafeTable.isPresent()) {
+            Optional<User> user = userService.get(waiterId);
+            if (user.isPresent()) {
+
+                user.get().addCafeTable(cafeTable.get());
+                log.info("Try to sign CafeTable by id -> {}, to User by Id -> {}", cafeTableId, waiterId);
+                return cafeTableRepository.save(cafeTable.get());
+            }
+            log.info("Cannot find order by ID -> {}", waiterId);
+        }
+        log.info("Cannot find table by ID -> {}", cafeTableId);
+        return new CafeTable();
     }
 }

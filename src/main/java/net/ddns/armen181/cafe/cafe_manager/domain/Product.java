@@ -26,7 +26,7 @@ public class Product implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "product",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "product",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Getter(AccessLevel.NONE)
     @JsonIgnore
     private Set<ProductInOrder> productInOrders = new HashSet<>();

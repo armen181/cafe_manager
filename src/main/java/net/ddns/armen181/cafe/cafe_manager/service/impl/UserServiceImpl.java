@@ -1,5 +1,6 @@
 package net.ddns.armen181.cafe.cafe_manager.service.impl;
 
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import net.ddns.armen181.cafe.cafe_manager.domain.User;
 import net.ddns.armen181.cafe.cafe_manager.enums.Role;
@@ -8,6 +9,7 @@ import net.ddns.armen181.cafe.cafe_manager.service.UserService;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -46,6 +48,11 @@ public class UserServiceImpl implements UserService {
     public Optional<User> get(Long id) {
         log.info("Get user by id -> {}", id);
         return userRepository.findById(id);
+    }
+
+    @Override
+    public List<User> getAll() {
+        return Lists.newArrayList(userRepository.findAll());
     }
 
     @Override
